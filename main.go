@@ -11,12 +11,14 @@ import (
 )
 
 // Current version of ASync
-var Version = "(unknown version)" // Set at build time in the Makefile
+var Version = "0.0.0-dev" // Set at build time in the Makefile
 
 var printVersion = flag.Bool("version", false, "Print version and exit")
 var listenAddr = flag.String("listenAddr", "localhost:8282", "Listen address for HTTP server")
 var listenNetwork = flag.String("listenNetwork", "tcp", "Listen 'network' (tcp, tcp4, tcp6, unix)")
 var listenUmask = flag.Int("listenUmask", 022, "Umask for Unix socket, default: 022")
+var cmdPrefix = flag.String("cmdPrefix", "", "Prefix of the command, like /usr/local/bin/php")
+var cmdsChanSize = flag.Int("cmdChanSize", 64, "Size of the commands chan, default: 64")
 
 func main() {
 	flag.Usage = func() {
@@ -49,7 +51,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	async := NewASync()
+	async := NewASync(*cmdPrefix, *cmdsChanSize)
 
 	log.Fatal(http.Serve(listener, async))
 }
